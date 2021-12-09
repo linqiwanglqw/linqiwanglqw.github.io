@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>IO模型</title>
+      <link href="blog/IO%E6%A8%A1%E5%9E%8B/"/>
+      <url>blog/IO%E6%A8%A1%E5%9E%8B/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>此文介绍了I/O模型的基本概念</p></blockquote><p><strong>本文会随着作者日常学习进行补充及内容修正</strong></p><hr><h1 id="I-O模型的概念"><a href="#I-O模型的概念" class="headerlink" title="I/O模型的概念"></a>I/O模型的概念</h1><p><code>I/O 模型</code>简单的理解：就是用什么样的通道进行数据的发送和接收，很大程度上决定了程序通信的性能。<br><code>Java</code> 共支持 <code>3 种</code>网络编程模型 I/O 模式：<strong><code>BIO</code>、<code>NIO</code>、<code>AIO</code></strong>。</p><h2 id="BIO模型"><a href="#BIO模型" class="headerlink" title="BIO模型"></a>BIO模型</h2><p><code>BIO</code>：同步并<code>阻塞</code>（传统阻塞型），服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销。</p><p><img src="BIO.png" alt="BIO模型"></p><h2 id="NIO模型"><a href="#NIO模型" class="headerlink" title="NIO模型"></a>NIO模型</h2><p><code>NIO</code>：同步<code>非阻塞</code>，服务器实现模式为一个线程处理多个请求（连接），即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有 <code>I/O</code> 请求就进行处理。</p><p><img src="NIO.png" alt="NIO模型"></p><h2 id="AIO模型"><a href="#AIO模型" class="headerlink" title="AIO模型"></a>AIO模型</h2><p><code>Java AIO(NIO.2)</code>：异步非阻塞，<code>AIO</code> 引入异步通道的概念，采用了 <code>Proactor</code> 模式，简化了程序编写，有效的请求才启动线程，它的特点是先由操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用。</p><h1 id="BIO、NIO、AIO-使用场景分析"><a href="#BIO、NIO、AIO-使用场景分析" class="headerlink" title="BIO、NIO、AIO 使用场景分析"></a>BIO、NIO、AIO 使用场景分析</h1><p><code>BIO</code> 方式适用于<code>连接数目比较小且固定</code>的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4 以前的唯一选择，但程序简单易理解。<br><code>NIO</code> 方式适用于<code>连接数目多且连接比较短</code>（轻操作）的架构，比如聊天服务器，弹幕系统，服务器间通讯等。编程比较复杂，JDK1.4 开始支持。<br><code>AIO</code> 方式使用于<code>连接数目多且连接比较长</code>（重操作）的架构，比如相册服务器，充分调用 OS 参与并发操作，编程比较复杂，JDK7 开始支持。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Netty </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Netty </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>高级功能</title>
       <link href="blog/%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD/"/>
       <url>blog/%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD/</url>
