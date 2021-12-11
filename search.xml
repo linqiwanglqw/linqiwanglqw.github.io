@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Redis基本概念</title>
+      <link href="blog/Redis/"/>
+      <url>blog/Redis/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>此文介绍了Redis的持久化、发布订阅、哨兵模式</p></blockquote><p><strong>本文会随着作者日常学习进行补充及内容修正</strong></p><hr><h2 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h2><p>持久化包括了<code>RDB</code>和<code>AOF</code></p><h3 id="RDB（Redis-DataBase）"><a href="#RDB（Redis-DataBase）" class="headerlink" title="RDB（Redis DataBase）"></a>RDB（Redis DataBase）</h3><blockquote><p>什么是RDB</p></blockquote><p><img src="https://i.loli.net/2020/12/10/8bZ21fKTvtBWjdl.png" alt="RDB"></p><p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是Snapshot快照，它恢复时是将快照文件直接读到内存里。</p><p>rdb保存的文件是dump.rdb</p><p>Redis会<code>单独创建（fork）一个子进程来进行持久化</code>，会先将数据<code>写入到一个临时文件</code>中，待持久化过程都结束了，再用这个<code>临时文件替换</code>上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况下不需要修改这个配置！</p><p><strong>优点</strong>：</p><ol><li><p>适合大规模的数据恢复！</p></li><li><p>对数据的完整性要不高！</p></li></ol><p><strong>缺点：</strong></p><ol><li><p>需要一定的时间间隔进程操作！如果redis意外宕机了，这个最后一次修改数据就没有的了！</p></li><li><p>fork进程的时候，会占用一定的内容空间！</p></li></ol><h3 id="AOF（Append-Only-File）"><a href="#AOF（Append-Only-File）" class="headerlink" title="AOF（Append Only File）"></a>AOF（Append Only File）</h3><p>将我们的所有命令都记录下来，恢复的时候就把这个文件全部在执行一遍！</p><blockquote><p>AOF是什么 </p></blockquote><p><img src="https://i.loli.net/2020/12/11/R9bNlX8x27iBQtM.png" alt="AOF"></p><p>以<code>日志的形式</code>来记录每个<code>写操作</code>，将Redis执行过的所有指令记录下来（<code>读操作不记录</code>），<code>只许追加</code>文件但<code>不可以改写</code>文件，redis启动之初会读取该文件<code>重新构建数据</code>，换言之，redis重启的话就根据日志文件的内容将写指令<code>从前到后执行</code>一次以完成数据的恢复工作</p><p><strong>Aof保存的是 appendonly.aof 文件</strong></p><p> 默认是不开启的，需要将 appendonly 改为yes就开启了 aof！重启，redis 就可以生效了！</p><p>如果这个 aof 文件有错位，这时候 redis 是启动不起来的吗，我们需要修复这个aof文件</p><p><strong>redis 给我们提供了一个工具 redis-check-aof —fix</strong></p><blockquote><p>重写规则说明</p></blockquote><p>aof 默认就是文件的无限追加，文件会越来越大！</p><p> 如果 aof 文件大于 64m，太大了！ fork一个新的进程来将我们的文件进行重写！</p><blockquote><p>优点和缺点！</p></blockquote><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">appendonly no # 默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分所有的情况下，rdb完全够用！</span><br><span class="line">appendfilename &quot;appendonly.aof&quot; # 持久化的文件的名字</span><br><span class="line"># appendfsync always # 每次修改都会 sync。消耗性能</span><br><span class="line">appendfsync everysec # 每秒执行一次 sync，可能会丢失这1s的数据！</span><br><span class="line"># appendfsync no # 不执行 sync，这个时候操作系统自己同步数据，速度最快！</span><br><span class="line"># rewrite 重写，</span><br></pre></td></tr></table></figure><p>优点：</p><ol><li><p>每一次修改都同步，文件的完整会更加好！</p></li><li><p>每秒同步一次，可能会丢失一秒的数据</p></li></ol><p>缺点：</p><ol><li><p>相对于数据文件来说，aof远远大于 rdb，修复的速度也比 rdb慢！</p></li><li><p>Aof 运行效率也要比rdb慢，所以我们redis默认的配置就是rdb持久化</p></li></ol><p><strong>扩展：</strong></p><ol><li><code>RDB 持久化</code>方式能够在指定的时间间隔内对你的数据进行<code>快照存储</code></li><li><code>AOF 持久化</code>方式<code>记录</code>每次对服务器<code>写的操作</code>，当<code>服务器重启</code>的时候会<code>重新执行</code>这些<code>命令</code>来<code>恢复</code>原始的<code>数据</code>，AOF命令以Redis 协议<code>追加保存每次写的操作</code>到文件末尾，Redis还能对AOF文件进行<code>后台重写</code>，使得AOF文件的体积不至于过大。</li><li>只做缓存，如果你只希望你的数据在服务器运行的时候存在，你也可以不使用任何持久化</li><li>同时开启两种持久化方式</li></ol><ul><li><p>在这种情况下，当redis重启的时候会<code>优先载入AOF文件</code>来恢复原始的数据，</p><p>因为在通常情况下AOF文件保存的数据集要比RDB文件保存的<code>数据集要完整</code>。</p></li><li><p>RDB 的数据不实时，同时使用两者时服务器重启也只会找AOF文件，那要不要只使用AOF呢？</p><p>作者建议不要，因为<code>RDB更适合用于备份数据库</code>（AOF在不断变化不好备份），快速重启，而且不会有AOF可能潜在的Bug，留着作为一个万一的手段。</p></li></ul><ol><li>性能建议</li></ol><ul><li>因为RDB文件只用作后备用途，建议只在Slave上持久化RDB文件，而且只要<code>15分钟</code>备份一次就够<br>了，只保留 <code>save 900 1</code>这条规则。</li><li>如果Enable AOF ，好处是在最恶劣情况下也只会丢失不超过两秒数据，启动脚本较简单只load自<br>己的AOF文件就可以了，代价一是带来了持续的IO，二是AOF rewrite 的最后将 rewrite 过程中产<br>生的新数据写到新文件造成的阻塞几乎是不可避免的。只要硬盘许可，应该尽量减少AOF rewrite<br>的频率，AOF重写的<code>基础大小默认值64M</code>太小了，可以设到5G以上，默认超过原大小100%大小重<br>写可以改到适当的数值。</li><li>如果不Enable AOF ，仅靠 Master-Slave Repllcation 实现高可用性也可以，能省掉一大笔IO，也<br>减少了rewrite时带来的系统波动。代价是如果Master/Slave 同时倒掉，会丢失十几分钟的数据，<br>启动脚本也要比较两个 Master/Slave 中的 RDB文件，<code>载入较新</code>的那个，微博就是这种架构。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Redis </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Redis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>基于 TCP 、UDP协议的 Socket 程序函数调用过程</title>
       <link href="blog/%E5%9F%BA%E4%BA%8E%20TCP%20%E3%80%81UDP%E5%8D%8F%E8%AE%AE%E7%9A%84%20Socket%20%E7%A8%8B%E5%BA%8F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"/>
       <url>blog/%E5%9F%BA%E4%BA%8E%20TCP%20%E3%80%81UDP%E5%8D%8F%E8%AE%AE%E7%9A%84%20Socket%20%E7%A8%8B%E5%BA%8F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/</url>
