@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>基于 TCP 、UDP协议的 Socket 程序函数调用过程</title>
+      <link href="blog/%E5%9F%BA%E4%BA%8E%20TCP%20%E3%80%81UDP%E5%8D%8F%E8%AE%AE%E7%9A%84%20Socket%20%E7%A8%8B%E5%BA%8F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"/>
+      <url>blog/%E5%9F%BA%E4%BA%8E%20TCP%20%E3%80%81UDP%E5%8D%8F%E8%AE%AE%E7%9A%84%20Socket%20%E7%A8%8B%E5%BA%8F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>此文介绍了基于 TCP 、UDP协议的 Socket 程序函数调用过程</p></blockquote><p><strong>本文会随着作者日常学习进行补充及内容修正</strong></p><hr><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><code>TCP 协议</code>是基于数据流的，所以设置为 SOCK_STREAM，而 <code>UDP 协议</code>是基于数据报的，因而设置为 SOCK_DGRAM。</p><h1 id="基于-TCP-协议的-Socket-程序函数调用过程"><a href="#基于-TCP-协议的-Socket-程序函数调用过程" class="headerlink" title="基于 TCP 协议的 Socket 程序函数调用过程"></a>基于 TCP 协议的 Socket 程序函数调用过程</h1><h2 id="调用过程"><a href="#调用过程" class="headerlink" title="调用过程"></a>调用过程</h2><p>TCP 的服务端要先<code>监听一个端口</code>，一般是先<code>调用 bind 函数</code>，给这个 Socket 赋予<code>一个 IP 地址和端口</code>。当服务端有了 IP 和端口号，就可以<code>调用 listen 函数监听</code>,服务端就<code>进入了 listen 状态</code>，这个时候<code>客户端就可以发起连接</code>。 在<code>内核</code>中，为每个 Socket<code>维护两个队列</code>。一个是<code>已经建立了连接</code>的队列，这时候连接<code>三次握手已经完毕</code>，处于 <code>established 状态</code>；一个是<code>还没有完全建立连接</code>的队列，这个时候<code>三次握手还没完成</code>，处于<code>syn_rcvd 的状态</code>。 接下来，服务端<code>调用 accept 函数</code>，拿出一个<code>已经完成的连接</code>进行处理。如果<code>还没有完成，就要等着</code>。 在服务端等待的时候，客户端可以通过<code>connect 函数发起连接</code>。先在参数中指明要<code>连接的 IP 地址和端口号</code>，然后开始<code>发起三次握手</code>。内核会给客户端分配一个临时的<code>端口</code>。一旦握手成功，服务端的 <code>accept</code>就会<code>返回另一个 Socket</code>。 这是一个经常考的知识点，<strong>就是监听的 Socket 和真正用来传数据的 Socket 是两个，一个叫作监听 Socket，一个叫作已连接 Socket</strong>。 连接建立成功之后，双方开始通过<code>read 和 write 函数来读写数据</code>，就像往一个文件流里面写东西一样。 </p><p><img src="TCP_socket.png" alt="基于 TCP 协议的 Socket 程序函数调用过程"></p><h2 id="最大连接数"><a href="#最大连接数" class="headerlink" title="最大连接数"></a>最大连接数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;本机 IP, 本机端口, 对端 IP, 对端端口&#125;</span><br></pre></td></tr></table></figure><p><strong>只要任意一个参数发生变化，就是一个新的连接</strong></p><hr><h1 id="基于-UDP-协议的-Socket-程序函数调用过程"><a href="#基于-UDP-协议的-Socket-程序函数调用过程" class="headerlink" title="基于 UDP 协议的 Socket 程序函数调用过程"></a>基于 UDP 协议的 Socket 程序函数调用过程</h1><p>UDP 是没有连接的，所以<code>不需要三次握手</code>，也就<code>不需要调用 listen 和 connect</code>，但是UDP 的交互仍然<code>需要 IP 和端口号</code>，因而也<code>需要 bind</code>。UDP 是<code>没有维护连接状态</code>的，因而不需要每对连接建立一组 Socket，而是<code>只要有 一个 Socket</code>，就能够和多个客户端通信。也正是因为没有连接状态，每次通信的时候，都<code>调用 sendto 和 recvfrom</code>，就可以传入 IP 地址和端口。</p><p><img src="UDP_socket.png" alt="基于 UDP 协议的 Socket 程序函数调用过程"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 计算机网络 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>IO模型</title>
       <link href="blog/IO%E6%A8%A1%E5%9E%8B/"/>
       <url>blog/IO%E6%A8%A1%E5%9E%8B/</url>
