@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>RabbitMQ工作模型</title>
+      <link href="blog/RabbitMQ%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%9E%8B/"/>
+      <url>blog/RabbitMQ%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%9E%8B/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>此文介绍了RabbitMQ工作模型</p></blockquote><p><strong>本文会随着作者日常学习进行补充及内容修正</strong></p><hr><h1 id="1-什么是RabbitMQ"><a href="#1-什么是RabbitMQ" class="headerlink" title="1.什么是RabbitMQ"></a>1.什么是<strong>RabbitMQ</strong></h1><p>​    MQ是Message Queue，也就是消息队列，是一个消息中间件,使用Erlang语言写的。</p><hr><h1 id="2-工作模型"><a href="#2-工作模型" class="headerlink" title="2.工作模型"></a>2.工作模型</h1><p><img src="https://s2.loli.net/2021/12/12/EI2WNdGwPLxpag6.png" alt="RabbitMQ的工作模型"></p><p>（1）Broker：中介。提供一种传输服务，维护一条从生产者到消费者的传输线路，保证消息数据能按照指定的方式传输。粗略的可以将图中的RabbitMQ Server当作Broker。</p><p>（2）Exchange：消息交换机。指定消息按照什么规则路由到哪个队列Queue。生产者不能直接和Queue建立连接，而是通过交换机进行消息分发。</p><p>（3）Queue：消息队列。消息的载体，每条消息都会被投送到一个或多个队列中。</p><p>（4）Binding：绑定。作用就是将Exchange和Queue按照某种路由规则绑定起来。</p><p>（5）RoutingKey：路由关键字。消息所携带的标志，Exchange根据RoutingKey进行消息投递。</p><p>（6）Vhost：虚拟主机。一个Broker可以有多个虚拟主机，用作不同用户的权限分离。一个虚拟主机持有一组Exchange、Queue和Binding。</p><p>（7）Producer：消息生产者。主要将消息投递到对应的Exchange上面。一般是独立的程序。</p><p>（8）Consumer：消息消费者。消息的接收者，一般是独立的程序。</p><p>（9）Channel：消息通道，也称信道，是连接消费者和Broker的虚拟连接，如果直接让消费者和Broker建立TCP的连接，会让Broker有性能损耗。在客户端的每个连接里可以建立多个Channel，每个Channel代表一个会话任务。</p><hr><h1 id="3-工作流程"><a href="#3-工作流程" class="headerlink" title="3.工作流程"></a>3.工作流程</h1><ol><li>生产者通过消息通道(channel)与RabbitMQ建立连接</li><li>消息传送到交换机（Exchange），并且消息上有对应的标志关键字(RoutingKey)</li><li>交换机Exchange接收到消息后，就根据消息的RoutingKey和已经设置的binding，进行消息路由（投递），将消息投递到一个或多个队列(Queue)里</li><li>消费者(Consumer)客户端从对应的队列中获取并处理消息</li></ol><hr><h1 id="4-Exchange类型"><a href="#4-Exchange类型" class="headerlink" title="4.Exchange类型"></a>4.Exchange类型</h1><ul><li><p>Direct </p><pre><code> 全匹配式传递。当RoutingKey和消息标志完全一样才会存放到对应的队列</code></pre></li><li><p>Topic<br>  广播式全部传递。息都会被投递到所有与此Exchange绑定的queue中</p></li><li><p>Fanout </p><pre><code> 匹配式传递</code></pre><p>​    #表示0个或多个单词</p><p>​     *表示1个</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 消息中间件 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 消息中间件 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Redis基本概念</title>
       <link href="blog/Redis/"/>
       <url>blog/Redis/</url>
