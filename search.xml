@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>单点登录</title>
+      <link href="blog/%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E6%B5%81%E7%A8%8B/"/>
+      <url>blog/%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E6%B5%81%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><blockquote><p>此文介绍了单点登录流程、JWT、token</p></blockquote><p><strong>本文会随着作者日常学习进行补充及内容修正</strong></p><hr><h2 id="单点登录流程"><a href="#单点登录流程" class="headerlink" title="单点登录流程"></a>单点登录流程</h2><ol><li>根据用户名查找</li><li>如果为null，就是用户不存在</li><li>密码匹配，如果不匹配，就是密码不正确</li><li>Jwt生成token</li><li>将token存入redis中，access token过期时间短，refresh_token过期时间长。</li></ol><hr><h2 id="JWT组成"><a href="#JWT组成" class="headerlink" title="JWT组成"></a>JWT组成</h2><p>第一部分我们称它为头部（header)</p><p>第二部分我们称其为载荷（payload)。载荷就是存放有效信息的地方。</p><p>第三部分是签证（signature)</p><p>JWT生成的token是这样的</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">XXXXXX</span><span class="selector-class">.XXXXXXX</span><span class="selector-class">.XXXXXXX</span></span><br></pre></td></tr></table></figure><blockquote><p>生成的token，是3段，用<code>.</code>连接。</p></blockquote><h3 id="头部"><a href="#头部" class="headerlink" title="头部"></a>头部</h3><p>用于描述关于该JWT的最基本的信息，例如其类型以及签名所用的算法等。这也可以被表示成一个JSON对象。<br>  例如：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;typ&quot;</span>: <span class="string">&quot;JWT&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;alg&quot;</span>: <span class="string">&quot;HS256&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="载荷"><a href="#载荷" class="headerlink" title="载荷"></a>载荷</h3><p>其实就是自定义的数据，一般<code>存储用户Id</code>，<code>过期时间</code>等信息。也就是JWT的核心所在，因为这些数据就是使后端知道此token是哪个用户已经登录的凭证。而且这些数据是存在token里面的，由前端携带，所以后端几乎不需要保存任何数据。<br>  例如：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;uid&quot;</span>: <span class="string">&quot;xxxxidid&quot;</span>,  <span class="comment">//用户id</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span>: <span class="string">&quot;12121212&quot;</span>  <span class="comment">//过期时间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="签名"><a href="#签名" class="headerlink" title="签名"></a>签名</h3><p>签名其实就是：<br> 1.头部和载荷<code>各自base64加密后用.连接起来</code>，然后就形成了xxx.xx的前两段token。<br> 2.最后一段token的形成是，前两段加入一个密匙用HS256算法或者其他算法加密形成。<br> 3.所以token的3段形成就是在签名处形成的。</p><hr><h2 id="访问令牌（access-token）和刷新令牌-refresh-token"><a href="#访问令牌（access-token）和刷新令牌-refresh-token" class="headerlink" title="访问令牌（access token）和刷新令牌(refresh_token )"></a>访问令牌（access token）和刷新令牌(refresh_token )</h2><ul><li><p>当用户登录的时候，生成<code>access_token</code>和<code>refresh_token</code>，并返回给APP。</p></li><li><p><code>access_token</code>是用于<code>身份验证</code>的。</p></li><li><p>当<code>access_token</code>失效时，APP使用<code>refresh_token</code>来请求<code>刷新token</code>。</p></li><li><p>如果<code>refresh_token</code>过期，需要用户重新登录，</p><p>也就是说，用户每一次登陆的时候refresh_token都会重新更改。</p></li><li><p>token的过期时间是分钟级别的。</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> JWT </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JWT </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>二分查找法</title>
       <link href="blog/%E4%BA%8C%E5%88%86%E6%B3%95/"/>
       <url>blog/%E4%BA%8C%E5%88%86%E6%B3%95/</url>
